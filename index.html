@@ -178,20 +178,40 @@ body{font-family:'Lexend',sans-serif;background:var(--nhs-warm);color:var(--text
 
 /* ─── EXERCISE CARDS ─────────────────────────────────────── */
 .ex-card{background:white;border:1px solid var(--border);border-radius:var(--rl);
-  overflow:hidden;box-shadow:var(--shadow-sm);cursor:pointer;transition:box-shadow .2s;}
-.ex-card:hover{box-shadow:var(--shadow-md);}
+  overflow:hidden;box-shadow:var(--shadow-sm);cursor:pointer;
+  transition:box-shadow .2s,border-color .2s,transform .2s;}
+.ex-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.ex-card.is-complete{border-color:#B5DEC9;}
 .ex-vis{
   background:linear-gradient(135deg,#EBF7F2,#d5f0e2);
   height:130px;display:flex;align-items:center;justify-content:center;
-  position:relative;border-bottom:1px solid var(--border);
+  position:relative;border-bottom:1px solid var(--border);overflow:hidden;
 }
 .ex-badge{position:absolute;top:10px;left:10px;background:var(--green-deeper);
-  color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:3px;}
-.ex-fig{font-size:58px;line-height:1;animation:breathe 3s ease-in-out infinite;}
+  color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:3px;z-index:3;}
+.ex-thumb{width:100%;height:100%;object-fit:cover;display:block;transition:filter .2s,transform .25s;}
+.ex-card:hover .ex-thumb{transform:scale(1.03);}
+.ex-play{
+  position:absolute;inset:auto auto 14px 14px;display:inline-flex;align-items:center;gap:6px;
+  padding:8px 12px;border-radius:999px;background:rgba(28,43,34,.72);color:white;
+  font-size:11px;font-weight:600;letter-spacing:.2px;z-index:2;backdrop-filter:blur(8px);
+}
+.ex-card.is-complete .ex-vis::before{
+  content:'';position:absolute;inset:0;background:rgba(255,255,255,.24);z-index:1;
+}
+.ex-card.is-complete .ex-vis::after{
+  content:'Completed';position:absolute;right:12px;bottom:14px;padding:6px 10px;
+  border-radius:999px;background:rgba(0,127,59,.92);color:white;font-size:11px;
+  font-weight:700;letter-spacing:.2px;z-index:3;
+}
+.ex-card.is-complete .ex-thumb{filter:saturate(.42) brightness(.8);}
+.ex-card.is-complete .ex-play{background:rgba(45,125,82,.82);}
 @keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.04);}}
 .ex-body{padding:16px;}
 .ex-name{font-size:15px;font-weight:600;margin-bottom:4px;}
 .ex-meta{font-size:12px;color:var(--text-muted);margin-bottom:8px;font-weight:300;}
+.ex-state{font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--green-deeper);margin-bottom:8px;}
+.ex-card.is-complete .ex-state{color:var(--risk-green);}
 .ex-desc{font-size:13px;color:var(--text-sec);line-height:1.7;font-weight:300;}
 
 /* ─── CHECKLIST ──────────────────────────────────────────── */
@@ -260,6 +280,15 @@ body{font-family:'Lexend',sans-serif;background:var(--nhs-warm);color:var(--text
 .modal-x{background:none;border:none;font-size:20px;cursor:pointer;
   color:var(--text-muted);line-height:1;padding:4px;}
 .modal-body{padding:24px;}
+.ex-modal-media{
+  background:linear-gradient(135deg,#EBF7F2,#d5f0e2);border-radius:var(--r);padding:16px;
+  margin-bottom:20px;border:1px solid var(--border);
+}
+.ex-video-frame{
+  width:100%;aspect-ratio:16/9;border-radius:var(--r);overflow:hidden;background:#0f1a15;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.ex-video-frame iframe{width:100%;height:100%;border:0;display:block;}
 
 /* ─── TIMER ──────────────────────────────────────────────── */
 .timer-ring-wrap{display:flex;flex-direction:column;align-items:center;margin:8px 0 16px;}
@@ -330,7 +359,7 @@ body{font-family:'Lexend',sans-serif;background:var(--nhs-warm);color:var(--text
 .view{display:none;}.view.active{display:block;}
 .pp{display:none;}.cl-p{display:none;}
 
-@media(max-width:700px){.sidebar{display:none;}.main{padding:20px 16px;}.g4{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:700px){.sidebar{display:none;}.main{padding:20px 16px;}.g4{grid-template-columns:repeat(2,1fr);}.g3,.g2{grid-template-columns:1fr;}.modal-bg{padding:12px;}.modal-body{padding:18px;}.ex-play{left:10px;bottom:10px;padding:7px 10px;}}
 </style>
 </head>
 <body>
@@ -397,27 +426,27 @@ body{font-family:'Lexend',sans-serif;background:var(--nhs-warm);color:var(--text
       <div class="card" style="margin-bottom:20px">
         <div class="card-title"><div class="ct-icon">✓</div>Today's Exercise Plan</div>
         <div id="pt-checklist">
-          <div class="cl-item" onclick="toggleCheck(this)">
+          <div class="cl-item" data-exercise="Quad Sets" data-start-label="Mark done" onclick="toggleCheck(this)">
             <div class="chk done">✓</div>
             <div class="cl-lbl done">Quad Sets — 3 sets × 15 reps</div>
             <span class="cl-act" style="color:var(--text-muted)">Done</span>
           </div>
-          <div class="cl-item" onclick="toggleCheck(this)">
+          <div class="cl-item" data-exercise="Straight Leg Raises" data-start-label="Mark done" onclick="toggleCheck(this)">
             <div class="chk done">✓</div>
             <div class="cl-lbl done">Straight Leg Raises — 3 sets × 12 reps</div>
             <span class="cl-act" style="color:var(--text-muted)">Done</span>
           </div>
-          <div class="cl-item" onclick="openEx('Heel Slides','🦵','2 sets × 20 reps · 90 sec rest','timed',90,2,20,['Lie flat on your back on a firm surface with legs extended.','Slowly slide your heel towards your buttocks, bending the knee as far as comfortable.','Hold for 2 seconds at the top of the movement.','Slowly return to the start position — that is one repetition.','Keep movements slow and controlled throughout.'])">
+          <div class="cl-item" data-exercise="Heel Slides" data-start-label="▶ Start" onclick="openEx('Heel Slides','6-anByqnKp8','2 sets × 20 reps · 90 sec rest','reps',90,2,20,['Lie flat on your back on a firm surface with legs extended.','Slowly slide your heel towards your buttocks, bending the knee as far as comfortable.','Hold for 2 seconds at the top of the movement.','Slowly return to the start position — that is one repetition.','Keep movements slow and controlled throughout.'])">
             <div class="chk">&#8203;</div>
             <div class="cl-lbl">Heel Slides — 2 sets × 20 reps</div>
             <span class="cl-act">▶ Start</span>
           </div>
-          <div class="cl-item" onclick="openEx('Wall Squats','🧍','3 sets × 10 reps · 120 sec rest','timed',120,3,10,['Stand with back flat against wall, feet shoulder-width apart, 30cm from wall.','Slowly slide down until knees are at 90°.','Hold for 5–10 seconds maintaining even weight.','Slowly straighten back to start.','Ensure knees track over toes and do not cave inwards.'])">
+          <div class="cl-item" data-exercise="Wall Squats" data-start-label="▶ Start" onclick="openEx('Wall Squats','aKBxiKs9n8A','3 sets × 10 reps · 120 sec rest','timed',120,3,10,['Stand with back flat against wall, feet shoulder-width apart, 30cm from wall.','Slowly slide down until knees are at 90°.','Hold for 5–10 seconds maintaining even weight.','Slowly straighten back to start.','Ensure knees track over toes and do not cave inwards.'])">
             <div class="chk">&#8203;</div>
             <div class="cl-lbl">Wall Squats — 3 sets × 10 reps</div>
             <span class="cl-act">▶ Start</span>
           </div>
-          <div class="cl-item" onclick="openEx('Calf Raises','🦶','3 sets × 15 reps · 45 sec rest','timed',45,3,15,['Stand near a wall for balance support.','Rise up onto the balls of both feet simultaneously.','Hold the raised position for 1–2 seconds.','Lower slowly and with control back to the floor.','Distribute weight evenly between both feet.'])">
+          <div class="cl-item" data-exercise="Calf Raises" data-start-label="▶ Start" onclick="openEx('Calf Raises','cqDMYUaIXvw','3 sets × 15 reps · 45 sec rest','reps',45,3,15,['Stand near a wall for balance support.','Rise up onto the balls of both feet simultaneously.','Hold the raised position for 1–2 seconds.','Lower slowly and with control back to the floor.','Distribute weight evenly between both feet.'])">
             <div class="chk">&#8203;</div>
             <div class="cl-lbl">Calf Raises — 3 sets × 15 reps</div>
             <span class="cl-act">▶ Start</span>
@@ -449,34 +478,34 @@ body{font-family:'Lexend',sans-serif;background:var(--nhs-warm);color:var(--text
       <div class="callout"><strong>Prescribed by Dr. James Okafor.</strong> If you experience sharp pain or significant discomfort, stop immediately and contact your physiotherapist.</div>
       <div class="g3" style="gap:20px">
 
-        <div class="ex-card" onclick="openEx('Quad Sets','🧎','3 sets × 15 reps · 45 sec rest','reps',45,3,15,['Sit or lie with your leg extended flat on a surface.','Tighten the quadriceps by pressing the back of your knee down.','Hold the contraction for 5 seconds.','Slowly release. That is one repetition.','Keep breathing steadily throughout.'])">
-          <div class="ex-vis"><div class="ex-badge">Phase 2 · Wk 6</div><div class="ex-fig">🧎</div></div>
-          <div class="ex-body"><div class="ex-name">Quad Sets</div><div class="ex-meta">3 sets × 15 reps · 45 sec rest</div><div class="ex-desc">Isometric quadriceps strengthening.</div></div>
+        <div class="ex-card" data-exercise="Quad Sets" onclick="openEx('Quad Sets','5TUK4uT2nnw','3 sets × 15 reps · 45 sec rest','reps',45,3,15,['Sit or lie with your leg extended flat on a surface.','Tighten the quadriceps by pressing the back of your knee down.','Hold the contraction for 5 seconds.','Slowly release. That is one repetition.','Keep breathing steadily throughout.'])">
+          <div class="ex-vis"><div class="ex-badge">Phase 2 · Wk 6</div><img class="ex-thumb" src="https://img.youtube.com/vi/5TUK4uT2nnw/hqdefault.jpg" alt="Quad Sets exercise video preview"/><div class="ex-play">Play Demo</div></div>
+          <div class="ex-body"><div class="ex-name">Quad Sets</div><div class="ex-meta">3 sets × 15 reps · 45 sec rest</div><div class="ex-state">Tap to play demo</div><div class="ex-desc">Isometric quadriceps strengthening.</div></div>
         </div>
 
-        <div class="ex-card" onclick="openEx('Straight Leg Raises','🏃','3 sets × 12 reps · 60 sec rest','reps',60,3,12,['Lie on your back, one leg bent, foot flat on floor.','Keep the opposite leg straight and tighten the thigh muscle.','Raise the straight leg to 45°.','Hold for 2 seconds, then slowly lower.','Do not allow your lower back to arch.'])">
-          <div class="ex-vis"><div class="ex-badge">Phase 2 · Wk 6</div><div class="ex-fig">🏃</div></div>
-          <div class="ex-body"><div class="ex-name">Straight Leg Raises</div><div class="ex-meta">3 sets × 12 reps · 60 sec rest</div><div class="ex-desc">Strengthens hip flexors and quads without loading the knee.</div></div>
+        <div class="ex-card" data-exercise="Straight Leg Raises" onclick="openEx('Straight Leg Raises','Ka19yzAlIGY','3 sets × 12 reps · 60 sec rest','reps',60,3,12,['Lie on your back, one leg bent, foot flat on floor.','Keep the opposite leg straight and tighten the thigh muscle.','Raise the straight leg to 45°.','Hold for 2 seconds, then slowly lower.','Do not allow your lower back to arch.'])">
+          <div class="ex-vis"><div class="ex-badge">Phase 2 · Wk 6</div><img class="ex-thumb" src="https://img.youtube.com/vi/Ka19yzAlIGY/hqdefault.jpg" alt="Straight Leg Raises exercise video preview"/><div class="ex-play">Play Demo</div></div>
+          <div class="ex-body"><div class="ex-name">Straight Leg Raises</div><div class="ex-meta">3 sets × 12 reps · 60 sec rest</div><div class="ex-state">Tap to play demo</div><div class="ex-desc">Strengthens hip flexors and quads without loading the knee.</div></div>
         </div>
 
-        <div class="ex-card" onclick="openEx('Heel Slides','🦵','2 sets × 20 reps · 90 sec rest','reps',90,2,20,['Lie flat on your back on a firm surface.','Slowly slide heel towards buttocks, bending knee as far as comfortable.','Hold for 2 seconds at the top.','Slowly return to start position.','Keep movements slow and controlled.'])">
-          <div class="ex-vis"><div class="ex-badge">Phase 2 · Wk 6</div><div class="ex-fig">🦵</div></div>
-          <div class="ex-body"><div class="ex-name">Heel Slides</div><div class="ex-meta">2 sets × 20 reps · 90 sec rest</div><div class="ex-desc">Improves knee flexion range of motion.</div></div>
+        <div class="ex-card" data-exercise="Heel Slides" onclick="openEx('Heel Slides','6-anByqnKp8','2 sets × 20 reps · 90 sec rest','reps',90,2,20,['Lie flat on your back on a firm surface with legs extended.','Slowly slide your heel towards your buttocks, bending the knee as far as comfortable.','Hold for 2 seconds at the top of the movement.','Slowly return to the start position — that is one repetition.','Keep movements slow and controlled throughout.'])">
+          <div class="ex-vis"><div class="ex-badge">Phase 2 · Wk 6</div><img class="ex-thumb" src="https://img.youtube.com/vi/6-anByqnKp8/hqdefault.jpg" alt="Heel Slides exercise video preview"/><div class="ex-play">Play Demo</div></div>
+          <div class="ex-body"><div class="ex-name">Heel Slides</div><div class="ex-meta">2 sets × 20 reps · 90 sec rest</div><div class="ex-state">Tap to play demo</div><div class="ex-desc">Improves knee flexion range of motion.</div></div>
         </div>
 
-        <div class="ex-card" onclick="openEx('Wall Squats','🏋','3 sets × 10 reps · 120 sec rest','timed',120,3,10,['Stand with back flat against wall, feet shoulder-width apart.','Slide down until knees reach 90°.','Hold for 5–10 seconds.','Slowly straighten back to start.','Ensure knees track over toes.'])">
-          <div class="ex-vis"><div class="ex-badge">Phase 2 · Wk 6</div><div class="ex-fig">🏋</div></div>
-          <div class="ex-body"><div class="ex-name">Wall Squats</div><div class="ex-meta">3 sets × 10 reps · 120 sec rest</div><div class="ex-desc">Controlled weight-bearing. Builds quad and glute strength.</div></div>
+        <div class="ex-card" data-exercise="Wall Squats" onclick="openEx('Wall Squats','aKBxiKs9n8A','3 sets × 10 reps · 120 sec rest','timed',120,3,10,['Stand with back flat against wall, feet shoulder-width apart, 30cm from wall.','Slowly slide down until knees are at 90°.','Hold for 5–10 seconds maintaining even weight.','Slowly straighten back to start.','Ensure knees track over toes and do not cave inwards.'])">
+          <div class="ex-vis"><div class="ex-badge">Phase 2 · Wk 6</div><img class="ex-thumb" src="https://img.youtube.com/vi/aKBxiKs9n8A/hqdefault.jpg" alt="Wall Squats exercise video preview"/><div class="ex-play">Play Demo</div></div>
+          <div class="ex-body"><div class="ex-name">Wall Squats</div><div class="ex-meta">3 sets × 10 reps · 120 sec rest</div><div class="ex-state">Tap to play demo</div><div class="ex-desc">Controlled weight-bearing. Builds quad and glute strength.</div></div>
         </div>
 
-        <div class="ex-card" onclick="openEx('Calf Raises','🦶','3 sets × 15 reps · 45 sec rest','timed',45,3,15,['Stand near a wall for balance support.','Rise onto balls of both feet simultaneously.','Hold for 1–2 seconds.','Lower slowly with control.','Keep weight even on both feet.'])">
-          <div class="ex-vis"><div class="ex-badge">Phase 2 · Wk 6</div><div class="ex-fig">🦶</div></div>
-          <div class="ex-body"><div class="ex-name">Calf Raises</div><div class="ex-meta">3 sets × 15 reps · 45 sec rest</div><div class="ex-desc">Strengthens gastrocnemius and soleus for gait rehab.</div></div>
+        <div class="ex-card" data-exercise="Calf Raises" onclick="openEx('Calf Raises','cqDMYUaIXvw','3 sets × 15 reps · 45 sec rest','reps',45,3,15,['Stand near a wall for balance support.','Rise up onto the balls of both feet simultaneously.','Hold the raised position for 1–2 seconds.','Lower slowly and with control back to the floor.','Distribute weight evenly between both feet.'])">
+          <div class="ex-vis"><div class="ex-badge">Phase 2 · Wk 6</div><img class="ex-thumb" src="https://img.youtube.com/vi/cqDMYUaIXvw/hqdefault.jpg" alt="Calf Raises exercise video preview"/><div class="ex-play">Play Demo</div></div>
+          <div class="ex-body"><div class="ex-name">Calf Raises</div><div class="ex-meta">3 sets × 15 reps · 45 sec rest</div><div class="ex-state">Tap to play demo</div><div class="ex-desc">Strengthens gastrocnemius and soleus for gait rehab.</div></div>
         </div>
 
-        <div class="ex-card" onclick="openEx('Hip Abduction','🧘','3 sets × 12 reps · no rest needed','reps',0,3,12,['Lie on your side with your legs stacked on top of each other.','Keeping your top leg straight, raise it to about 45°.','Hold for 2 seconds at the top.','Slowly lower back down.','Complete all reps before switching sides.'])">
-          <div class="ex-vis"><div class="ex-badge">Phase 2 · Wk 6</div><div class="ex-fig">🧘</div></div>
-          <div class="ex-body"><div class="ex-name">Hip Abduction</div><div class="ex-meta">3 sets × 12 reps · no rest needed</div><div class="ex-desc">Strengthens hip abductors and glute med. Reps tracked only.</div></div>
+        <div class="ex-card" data-exercise="Hip Abduction" onclick="openEx('Hip Abduction','g9FtnmsIYgI','3 sets × 12 reps · no rest needed','reps',0,3,12,['Lie on your side with your legs stacked on top of each other.','Keeping your top leg straight, raise it to about 45°.','Hold for 2 seconds at the top.','Slowly lower back down.','Complete all reps before switching sides.'])">
+          <div class="ex-vis"><div class="ex-badge">Phase 2 · Wk 6</div><img class="ex-thumb" src="https://img.youtube.com/vi/g9FtnmsIYgI/hqdefault.jpg" alt="Hip Abduction exercise video preview"/><div class="ex-play">Play Demo</div></div>
+          <div class="ex-body"><div class="ex-name">Hip Abduction</div><div class="ex-meta">3 sets × 12 reps · no rest needed</div><div class="ex-state">Tap to play demo</div><div class="ex-desc">Strengthens hip abductors and glute med. Reps tracked only.</div></div>
         </div>
 
       </div>
@@ -739,8 +768,8 @@ body{font-family:'Lexend',sans-serif;background:var(--nhs-warm);color:var(--text
       <button class="modal-x" onclick="closeModal('ex-modal')">×</button>
     </div>
     <div class="modal-body">
-      <div style="background:linear-gradient(135deg,#EBF7F2,#d5f0e2);border-radius:var(--r);padding:24px;text-align:center;margin-bottom:20px;border:1px solid var(--border)">
-        <div id="ex-fig" style="font-size:68px;animation:breathe 3s ease-in-out infinite">🦵</div>
+      <div class="ex-modal-media">
+        <div id="ex-media"></div>
       </div>
 
       <div style="font-size:15px;font-weight:600;margin-bottom:10px">Step-by-step Instructions</div>
@@ -770,7 +799,7 @@ body{font-family:'Lexend',sans-serif;background:var(--nhs-warm);color:var(--text
       </div>
 
       <div style="margin-top:4px">
-        <button class="btn btn-p" style="width:100%" onclick="markExDone()">✓ Mark Exercise as Complete</button>
+        <button class="btn btn-p" id="ex-complete-btn" style="width:100%" onclick="markExDone()">✓ Mark Exercise as Complete</button>
       </div>
     </div>
   </div>
@@ -827,11 +856,93 @@ function clTab(id,el){
 function selMood(b){document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');}
 
 // ── Checklist ──────────────────────────────────────────────────
+const completedExercises=new Set();
+let activeExerciseName='';
+
+function setExerciseCardState(name,isComplete){
+  document.querySelectorAll('.ex-card[data-exercise]').forEach(card=>{
+    if(card.dataset.exercise!==name)return;
+    card.classList.toggle('is-complete',isComplete);
+    const state=card.querySelector('.ex-state');
+    if(state)state.textContent=isComplete?'Completed':'Tap to play demo';
+  });
+}
+
+function setChecklistState(name,isComplete){
+  document.querySelectorAll('#pt-checklist .cl-item[data-exercise]').forEach(row=>{
+    if(row.dataset.exercise!==name)return;
+    const box=row.querySelector('.chk');
+    const lbl=row.querySelector('.cl-lbl');
+    const act=row.querySelector('.cl-act');
+    if(!box||!lbl||!act)return;
+    if(isComplete){
+      box.classList.add('done');box.textContent='✓';
+      lbl.classList.add('done');act.textContent='Done';act.style.color='var(--text-muted)';
+    } else {
+      box.classList.remove('done');box.textContent='\u200B';
+      lbl.classList.remove('done');
+      act.textContent=row.dataset.startLabel||'Mark done';
+      act.style.color='var(--green-deeper)';
+    }
+  });
+}
+
+function updateExerciseCompletion(name,isComplete){
+  if(!name)return;
+  if(isComplete)completedExercises.add(name);
+  else completedExercises.delete(name);
+  setExerciseCardState(name,isComplete);
+  setChecklistState(name,isComplete);
+}
+
+function syncExerciseCards(){
+  document.querySelectorAll('#pt-checklist .cl-item[data-exercise]').forEach(row=>{
+    const box=row.querySelector('.chk');
+    if(box&&box.classList.contains('done'))completedExercises.add(row.dataset.exercise);
+  });
+  document.querySelectorAll('.ex-card[data-exercise]').forEach(card=>{
+    setExerciseCardState(card.dataset.exercise,completedExercises.has(card.dataset.exercise));
+  });
+}
+
+function getExerciseEmbedUrl(videoId){
+  return 'https://www.youtube-nocookie.com/embed/'+videoId+'?rel=0&modestbranding=1&playsinline=1';
+}
+
+function renderExerciseMedia(name,videoId){
+  const media=document.getElementById('ex-media');
+  if(!media)return;
+  media.innerHTML='';
+  const frame=document.createElement('div');
+  frame.className='ex-video-frame';
+  frame.innerHTML='<iframe src="'+getExerciseEmbedUrl(videoId)+'" title="'+name+' exercise video" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+  media.appendChild(frame);
+}
+
+function resetExerciseMedia(){
+  const media=document.getElementById('ex-media');
+  if(media)media.innerHTML='';
+}
+
+function syncCompleteButton(name){
+  const btn=document.getElementById('ex-complete-btn');
+  if(!btn)return;
+  const isComplete=completedExercises.has(name);
+  btn.textContent=isComplete?'✓ Marked as Complete':'✓ Mark Exercise as Complete';
+  btn.style.background=isComplete?'var(--risk-green)':'';
+}
+
 function toggleCheck(row){
   const box=row.querySelector('.chk'),lbl=row.querySelector('.cl-lbl');
   const done=box.classList.contains('done');
   if(!done){box.classList.add('done');box.textContent='✓';lbl.classList.add('done');}
   else{box.classList.remove('done');box.textContent='\u200B';lbl.classList.remove('done');}
+  const act=row.querySelector('.cl-act');
+  if(act){
+    act.textContent=!done?'Done':(row.dataset.startLabel||'Mark done');
+    act.style.color=!done?'var(--text-muted)':'var(--green-deeper)';
+  }
+  if(row.dataset.exercise)updateExerciseCompletion(row.dataset.exercise,!done);
 }
 
 // ── Timer state ────────────────────────────────────────────────
@@ -904,10 +1015,12 @@ function markSetDone(i,target){
 }
 
 // ── Open exercise modal ────────────────────────────────────────
-function openEx(name,fig,meta,mode,restSecs,sets,reps,steps){
+function openEx(name,videoId,meta,mode,restSecs,sets,reps,steps){
+  activeExerciseName=name;
   document.getElementById('ex-title').textContent=name;
-  document.getElementById('ex-fig').textContent=fig;
   document.getElementById('ex-meta-lbl').textContent=meta;
+  renderExerciseMedia(name,videoId);
+  syncCompleteButton(name);
   // steps
   const ul=document.getElementById('ex-steps');ul.innerHTML='';
   steps.forEach((s,i)=>{
@@ -932,7 +1045,11 @@ function openEx(name,fig,meta,mode,restSecs,sets,reps,steps){
   document.getElementById('ex-modal').style.display='flex';
 }
 
-function markExDone(){closeModal('ex-modal');}
+function markExDone(){
+  updateExerciseCompletion(activeExerciseName,true);
+  syncCompleteButton(activeExerciseName);
+  closeModal('ex-modal');
+}
 
 // ── Patient detail modal ───────────────────────────────────────
 function openPt(name,cond,adh,risk,last,status){
@@ -951,9 +1068,17 @@ function openPt(name,cond,adh,risk,last,status){
 // ── Modal helpers ──────────────────────────────────────────────
 function closeModal(id){
   document.getElementById(id).style.display='none';
-  if(id==='ex-modal'){clearInterval(timerInterval);timerRunning=false;}
+  if(id==='ex-modal'){
+    clearInterval(timerInterval);timerRunning=false;
+    resetExerciseMedia();
+    activeExerciseName='';
+    const btn=document.getElementById('ex-complete-btn');
+    if(btn){btn.textContent='✓ Mark Exercise as Complete';btn.style.background='';}
+  }
 }
 function closeBg(e,id){if(e.target.id===id)closeModal(id);}
+
+syncExerciseCards();
 </script>
 </body>
 </html>
