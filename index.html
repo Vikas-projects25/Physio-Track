@@ -303,7 +303,15 @@ body{font-family:'Lexend',sans-serif;background:var(--nhs-warm);color:var(--text
   display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
 
 /* ─── SVG CHART ──────────────────────────────────────────── */
-.chart-svg{width:100%;height:100%;overflow:visible;}
+.trajectory-chart{position:relative;height:200px;padding:12px 10px 30px 46px;}
+.trajectory-plot{position:relative;width:100%;height:100%;}
+.chart-svg{width:100%;height:100%;overflow:visible;display:block;}
+.axis-label{
+  position:absolute;font-size:12px;color:var(--text-muted);font-weight:500;
+  letter-spacing:.2px;text-transform:lowercase;
+}
+.axis-label.x{left:50%;bottom:0;transform:translateX(-50%);}
+.axis-label.y{left:14px;top:50%;transform:translateY(-50%) rotate(-90deg);transform-origin:center;}
 
 /* ─── TIMELINE ───────────────────────────────────────────── */
 .tl{position:relative;padding-left:24px;}
@@ -490,22 +498,27 @@ body{font-family:'Lexend',sans-serif;background:var(--nhs-warm);color:var(--text
           <p>Recovery trajectory is <strong>positive</strong>. Predicted full recovery: <strong>10–12 weeks</strong>. Risk of slow recovery: <strong style="color:var(--risk-green)">Low (18%)</strong>. Sustained adherence likelihood: <strong style="color:var(--risk-green)">High (82%)</strong>.</p>
         </div>
         <div style="margin-bottom:8px;font-size:12px;color:var(--text-muted);font-weight:500">ESTIMATED RECOVERY TRAJECTORY</div>
-        <div style="height:110px;position:relative">
-          <svg class="chart-svg" viewBox="0 0 480 100" preserveAspectRatio="none">
+        <div class="trajectory-chart">
+          <div class="trajectory-plot">
+          <svg class="chart-svg" viewBox="0 0 480 160" aria-label="Estimated recovery trajectory chart">
             <defs><linearGradient id="cg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#74C493" stop-opacity=".2"/><stop offset="100%" stop-color="#74C493" stop-opacity=".01"/></linearGradient></defs>
             <line x1="0" y1="20" x2="480" y2="20" stroke="#E5EDE9" stroke-width="1"/>
-            <line x1="0" y1="50" x2="480" y2="50" stroke="#E5EDE9" stroke-width="1"/>
-            <line x1="0" y1="80" x2="480" y2="80" stroke="#E5EDE9" stroke-width="1"/>
-            <path d="M0,80 C40,77 80,70 120,62 C160,54 200,38 240,30 C280,22 320,16 360,12 C400,9 440,8 480,8 L480,100 L0,100 Z" fill="url(#cg)"/>
-            <path d="M0,80 C40,77 80,70 120,62 C160,54 200,38 240,30 C280,22 320,16 360,12 C400,9 440,8 480,8" fill="none" stroke="#3D9E68" stroke-width="2.5" stroke-linecap="round"/>
-            <circle cx="130" cy="60" r="5" fill="#3D9E68"/>
-            <line x1="130" y1="8" x2="130" y2="95" stroke="#3D9E68" stroke-width="1" stroke-dasharray="3,3" opacity=".4"/>
-            <text x="134" y="18" font-size="9" fill="#3D9E68" font-family="Lexend,sans-serif" font-weight="600">Today — Week 6</text>
-            <text x="2" y="97" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">Wk 1</text>
-            <text x="113" y="97" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">Wk 6</text>
-            <text x="230" y="97" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">Wk 10</text>
-            <text x="380" y="97" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">Wk 16</text>
+            <line x1="0" y1="60" x2="480" y2="60" stroke="#E5EDE9" stroke-width="1"/>
+            <line x1="0" y1="100" x2="480" y2="100" stroke="#E5EDE9" stroke-width="1"/>
+            <line x1="0" y1="120" x2="480" y2="120" stroke="#D3E5DB" stroke-width="1.2"/>
+            <path d="M0,108 C48,104 88,98 128,92 C172,85 214,74 258,61 C302,49 344,42 388,38 C424,35 452,34 480,34 L480,120 L0,120 Z" fill="url(#cg)"/>
+            <path d="M0,108 C48,104 88,98 128,92 C172,85 214,74 258,61 C302,49 344,42 388,38 C424,35 452,34 480,34" fill="none" stroke="#3D9E68" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="130" cy="91" r="5.5" fill="#3D9E68"/>
+            <line x1="130" y1="18" x2="130" y2="120" stroke="#3D9E68" stroke-width="1.5" stroke-dasharray="4,4" opacity=".35"/>
+            <text x="136" y="18" font-size="9" fill="#3D9E68" font-family="Lexend,sans-serif" font-weight="600">Today — Week 6</text>
+            <text x="2" y="142" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">Wk 1</text>
+            <text x="112" y="142" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">Wk 6</text>
+            <text x="230" y="142" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">Wk 10</text>
+            <text x="380" y="142" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">Wk 16</text>
           </svg>
+          </div>
+          <div class="axis-label x">time</div>
+          <div class="axis-label y">recovery</div>
         </div>
         <div style="font-size:12px;color:var(--text-muted);text-align:center;font-weight:300;margin-top:8px">Functional recovery score over programme duration</div>
       </div>
