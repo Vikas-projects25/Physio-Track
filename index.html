@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PhysioConnect — NHS Physiotherapy Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Frutiger+Neue:wght@300;400;500;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --nhs-blue: #005EB8;
+    --nhs-dark: #003087;
+    --nhs-light: #41B6E6;
+    --nhs-green: #007F3B;
+    --nhs-warm: #F0F4F5;
+    --nhs-white: #FFFFFF;
+    --text-primary: #212B32;
+    --text-secondary: #4C6272;
+    --text-muted: #768692;
+    --border: #D8DDE0;
+    --red: #DA291C;
+    --amber: #ED8B00;
+    --green: #007F3B;
+    --red-bg: #FBEEED;
+    --amber-bg: #FEF5E7;
+    --green-bg: #E8F4EE;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06);
+    --radius: 6px;
+    --radius-lg: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Lexend', 'Frutiger Neue', sans-serif;
+    background: var(--nhs-warm);
+    color: var(--text-primary);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  /* ── NHS Top Banner ── */
+  .nhs-banner {
+    background: var(--nhs-blue);
+    color: white;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 48px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,48,135,0.3);
+  }
+  .nhs-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: white;
+  }
+  .nhs-logo-box {
+    background: white;
+    color: var(--nhs-blue);
+    font-weight: 700;
+    font-size: 18px;
+    padding: 4px 8px;
+    border-radius: 3px;
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .nhs-logo-text {
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.95;
+    letter-spacing: 0.2px;
+  }
+  .banner-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .role-tab {
+    padding: 6px 16px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.35);
+    background: transparent;
+    color: rgba(255,255,255,0.85);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    letter-spacing: 0.2px;
+  }
+  .role-tab.active {
+    background: white;
+    color: var(--nhs-blue);
+    border-color: white;
+    font-weight: 600;
+  }
+  .role-tab:hover:not(.active) {
+    background: rgba(255,255,255,0.12);
+    color: white;
+  }
+
+  /* ── Layout ── */
+  .app-shell {
+    display: flex;
+    min-height: calc(100vh - 48px);
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 240px;
+    background: white;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 48px;
+    height: calc(100vh - 48px);
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+  .sidebar-section {
+    padding: 20px 0 8px;
+  }
+  .sidebar-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 0 20px;
+    margin-bottom: 4px;
+  }
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 400;
+    border-left: 3px solid transparent;
+    transition: all 0.12s;
+    text-decoration: none;
+  }
+  .sidebar-item:hover { background: var(--nhs-warm); color: var(--nhs-blue); }
+  .sidebar-item.active {
+    background: #EBF3FB;
+    color: var(--nhs-blue);
+    border-left-color: var(--nhs-blue);
+    font-weight: 600;
+  }
+  .sidebar-icon { width: 18px; text-align: center; font-size: 15px; }
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .clinician-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .clinician-avatar {
+    width: 36px; height: 36px;
+    background: var(--nhs-blue);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 600; font-size: 13px;
+    flex-shrink: 0;
+  }
+  .clinician-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .clinician-role { font-size: 11px; color: var(--text-muted); }
+
+  /* ── Main Content ── */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 36px;
+    min-width: 0;
+  }
+
+  /* ── Page Header ── */
+  .page-header {
+    margin-bottom: 28px;
+  }
+  .page-header h1 {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+    font-family: 'Lora', serif;
+    line-height: 1.2;
+  }
+  .page-header p {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-top: 4px;
+    font-weight: 300;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title-icon {
+    width: 28px; height: 28px;
+    background: var(--nhs-warm);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+
+  /* ── Grid ── */
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+
+  /* ── Stat Cards ── */
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat-label { font-size: 12px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .stat-value { font-size: 28px; font-weight: 600; color: var(--text-primary); font-family: 'Lora', serif; letter-spacing: -0.5px; }
+  .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; font-weight: 300; }
+  .stat-accent-blue { border-top: 3px solid var(--nhs-blue); }
+  .stat-accent-green { border-top: 3px solid var(--green); }
+  .stat-accent-amber { border-top: 3px solid var(--amber); }
+  .stat-accent-red { border-top: 3px solid var(--red); }
+
+  /* ── RAG Status ── */
+  .rag-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .rag-red { background: var(--red-bg); color: var(--red); border: 1px solid #f5b8b5; }
+  .rag-amber { background: var(--amber-bg); color: #7D4800; border: 1px solid #f5d38a; }
+  .rag-green { background: var(--green-bg); color: var(--green); border: 1px solid #a8d5b5; }
+  .rag-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .rag-red .rag-dot { background: var(--red); }
+  .rag-amber .rag-dot { background: var(--amber); }
+  .rag-green .rag-dot { background: var(--green); }
+
+  /* ── Patient Table ── */
+  .patient-table { width: 100%; border-collapse: collapse; }
+  .patient-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 10px 16px;
+    background: var(--nhs-warm);
+    border-bottom: 1px solid var(--border);
+  }
+  .patient-table td {
+    padding: 14px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid #F0F0F0;
+    vertical-align: middle;
+  }
+  .patient-table tr:last-child td { border-bottom: none; }
+  .patient-table tr:hover td { background: #FAFBFC; cursor: pointer; }
+  .patient-name-cell { font-weight: 600; color: var(--text-primary); }
+  .patient-sub { font-size: 12px; color: var(--text-muted); font-weight: 300; margin-top: 1px; }
+
+  /* ── Progress Bar ── */
+  .progress-track {
+    height: 6px;
+    background: #E8ECEF;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.6s ease;
+  }
+
+  /* ── AI Insight Box ── */
+  .ai-insight {
+    background: linear-gradient(135deg, #EBF3FB, #F0F7FF);
+    border: 1px solid #B8D4EE;
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ai-insight::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--nhs-blue);
+    border-radius: 2px 0 0 2px;
+  }
+  .ai-insight-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .ai-chip {
+    background: var(--nhs-blue);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+  .ai-insight p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+  .ai-insight strong { color: var(--text-primary); font-weight: 600; }
+
+  /* ── Risk Score ── */
+  .risk-meter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .risk-bar-container {
+    flex: 1;
+    height: 8px;
+    background: linear-gradient(90deg, var(--green) 0%, var(--green) 40%, var(--amber) 40%, var(--amber) 70%, var(--red) 70%);
+    border-radius: 99px;
+    position: relative;
+    opacity: 0.25;
+  }
+  .risk-bar-filled {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: transparent;
+    border-right: 3px solid var(--text-primary);
+    border-radius: 0;
+  }
+  .risk-pct {
+    font-size: 18px;
+    font-weight: 700;
+    min-width: 46px;
+    text-align: right;
+    font-family: 'Lora', serif;
+  }
+
+  /* ── Section Divider ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    border: none;
+    text-decoration: none;
+  }
+  .btn-primary { background: var(--nhs-blue); color: white; }
+  .btn-primary:hover { background: var(--nhs-dark); }
+  .btn-outline { background: white; color: var(--nhs-blue); border: 1px solid var(--nhs-blue); }
+  .btn-outline:hover { background: #EBF3FB; }
+  .btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--nhs-warm); }
+  .btn-sm { padding: 6px 12px; font-size: 13px; }
+
+  /* ── Tags ── */
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--nhs-warm);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Timeline ── */
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: var(--border);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .timeline-dot {
+    position: absolute;
+    left: -24px;
+    top: 4px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px var(--border);
+  }
+  .timeline-dot.blue { background: var(--nhs-blue); box-shadow: 0 0 0 2px var(--nhs-blue); }
+  .timeline-dot.green { background: var(--green); box-shadow: 0 0 0 2px var(--green); }
+  .timeline-dot.amber { background: var(--amber); box-shadow: 0 0 0 2px var(--amber); }
+  .timeline-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .timeline-date { font-size: 12px; color: var(--text-muted); margin-top: 2px; font-weight: 300; }
+
+  /* ── Exercise Tutorial ── */
+  .exercise-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s;
+  }
+  .exercise-card:hover { box-shadow: var(--shadow-md); }
+  .exercise-visual {
+    background: linear-gradient(135deg, #EBF3FB, #ddeeff);
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .exercise-figure {
+    font-size: 60px;
+    line-height: 1;
+    filter: grayscale(0.2);
+    animation: breathe 3s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+  }
+  .exercise-step-badge {
+    position: absolute;
+    top: 10px; left: 10px;
+    background: var(--nhs-blue);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 3px;
+    letter-spacing: 0.3px;
+  }
+  .exercise-body { padding: 16px; }
+  .exercise-name { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+  .exercise-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; font-weight: 300; }
+  .exercise-instructions { font-size: 13px; color: var(--text-secondary); line-height: 1.7; font-weight: 300; }
+  .exercise-steps-list { list-style: none; padding: 0; margin: 10px 0; }
+  .exercise-steps-list li {
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    line-height: 1.5;
+    font-weight: 300;
+  }
+  .step-num {
+    width: 20px; height: 20px;
+    background: var(--nhs-blue);
+    color: white;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── Timer ── */
+  .timer-circle-wrap { display: flex; flex-direction: column; align-items: center; margin: 16px 0; }
+  .timer-display {
+    font-size: 44px;
+    font-weight: 600;
+    font-family: 'Lora', serif;
+    color: var(--nhs-blue);
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+  .timer-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; letter-spacing: 0.5px; }
+
+  /* ── Modal ── */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 2000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .modal {
+    background: white;
+    border-radius: var(--radius-lg);
+    max-width: 520px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+  }
+  .modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-title { font-size: 17px; font-weight: 600; font-family: 'Lora', serif; }
+  .modal-close {
+    background: none; border: none; font-size: 20px;
+    cursor: pointer; color: var(--text-muted); line-height: 1;
+    padding: 4px;
+  }
+  .modal-body { padding: 24px; }
+
+  /* ── Recovery Prediction Chart ── */
+  .recovery-chart {
+    position: relative;
+    height: 120px;
+    margin: 16px 0;
+  }
+  .chart-svg { width: 100%; height: 100%; overflow: visible; }
+
+  /* ── Mood Selector ── */
+  .mood-grid { display: flex; gap: 8px; }
+  .mood-btn {
+    flex: 1;
+    background: var(--nhs-warm);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 4px;
+    text-align: center;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .mood-btn:hover, .mood-btn.selected {
+    border-color: var(--nhs-blue);
+    background: #EBF3FB;
+  }
+  .mood-emoji { font-size: 22px; display: block; margin-bottom: 4px; }
+  .mood-label { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+
+  /* ── Notification Banner ── */
+  .notif {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    border: 1px solid;
+    font-size: 14px;
+  }
+  .notif-info { background: #EBF3FB; border-color: #B8D4EE; color: var(--nhs-dark); }
+  .notif-warn { background: var(--amber-bg); border-color: #f5d38a; color: #7D4800; }
+  .notif-alert { background: var(--red-bg); border-color: #f5b8b5; color: var(--red); }
+
+  /* ── Week bar chart ── */
+  .week-bars { display: flex; gap: 6px; align-items: flex-end; height: 64px; }
+  .week-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .week-bar {
+    width: 100%;
+    border-radius: 3px 3px 0 0;
+    min-height: 4px;
+  }
+  .week-day-label { font-size: 10px; color: var(--text-muted); font-weight: 500; }
+
+  /* ── Hide/Show ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── Patient Portal Header ── */
+  .portal-hero {
+    background: linear-gradient(135deg, var(--nhs-dark) 0%, var(--nhs-blue) 100%);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    color: white;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .portal-hero::after {
+    content: '';
+    position: absolute;
+    right: -40px; top: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .portal-hero h2 { font-size: 22px; font-weight: 600; font-family: 'Lora', serif; margin-bottom: 4px; }
+  .portal-hero p { font-size: 14px; opacity: 0.8; font-weight: 300; }
+  .hero-meta { display: flex; gap: 24px; margin-top: 20px; }
+  .hero-meta-item { }
+  .hero-meta-label { font-size: 11px; opacity: 0.7; font-weight: 500; letter-spacing: 0.3px; margin-bottom: 2px; }
+  .hero-meta-val { font-size: 18px; font-weight: 600; font-family: 'Lora', serif; }
+
+  /* ── Appointment card ── */
+  .appt-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 12px;
+  }
+  .appt-date-block {
+    background: var(--nhs-blue);
+    color: white;
+    border-radius: 8px;
+    width: 52px; height: 52px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .appt-day { font-size: 20px; font-weight: 700; font-family: 'Lora', serif; line-height: 1; }
+  .appt-month { font-size: 10px; font-weight: 500; letter-spacing: 0.5px; opacity: 0.85; }
+
+  /* ── Checklist ── */
+  .checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #F0F0F0;
+    cursor: pointer;
+  }
+  .checklist-item:last-child { border-bottom: none; }
+  .check-box {
+    width: 22px; height: 22px;
+    border-radius: 4px;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    background: white;
+    font-size: 13px;
+  }
+  .check-box.checked { border-color: var(--green); background: var(--green); color: white; }
+  .checklist-label { font-size: 14px; flex: 1; }
+  .checklist-label.done { text-decoration: line-through; color: var(--text-muted); }
+  .checklist-action { font-size: 12px; color: var(--nhs-blue); font-weight: 500; cursor: pointer; }
+
+  /* ── Tabs within page ── */
+  .page-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .page-tab {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: inherit;
+    transition: color 0.15s;
+  }
+  .page-tab.active { color: var(--nhs-blue); border-bottom-color: var(--nhs-blue); font-weight: 600; }
+  .page-tab:hover:not(.active) { color: var(--text-primary); }
+
+  /* ── Info callout ── */
+  .info-callout {
+    background: #F0F7FF;
+    border-left: 4px solid var(--nhs-blue);
+    padding: 12px 16px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 900px) {
+    .sidebar { width: 200px; }
+    .main { padding: 24px 20px; }
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 700px) {
+    .sidebar { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NHS Top Bar ── -->
+<header class="nhs-banner">
+  <div class="nhs-logo">
+    <div class="nhs-logo-box">NHS</div>
+    <span class="nhs-logo-text">PhysioConnect</span>
+  </div>
+  <div class="banner-nav">
+    <button class="role-tab active" onclick="switchRole('patient')">Patient Portal</button>
+    <button class="role-tab" onclick="switchRole('clinician')">Clinician Dashboard</button>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  PATIENT PORTAL                                           -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="patient-view" class="view active">
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">My Care</div>
+        <div class="sidebar-item active" onclick="patientTab('overview', this)">
+          <span class="sidebar-icon">⊞</span> Overview
+        </div>
+        <div class="sidebar-item" onclick="patientTab('exercises', this)">
+          <span class="sidebar-icon">🏋</span> Exercises
+        </div>
+        <div class="sidebar-item" onclick="patientTab('progress', this)">
+          <span class="sidebar-icon">📈</span> My Progress
+        </div>
+        <div class="sidebar-item" onclick="patientTab('appointments', this)">
+          <span class="sidebar-icon">📅</span> Appointments
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Support</div>
+        <div class="sidebar-item" onclick="patientTab('contact', this)">
+          <span class="sidebar-icon">✉</span> Contact Physio
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="clinician-card">
+          <div class="clinician-avatar">SM</div>
+          <div>
+            <div class="clinician-name">Sarah Mitchell</div>
+            <div class="clinician-role">ACL Recovery · Wk 6</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+
+      <!-- OVERVIEW -->
+      <div id="pt-overview" class="pt-panel">
+        <!-- Hero -->
+        <div class="portal-hero">
+          <h2>Good morning, Sarah</h2>
+          <p>You have <strong>3 exercises</strong> remaining today. Your next appointment is in <strong>5 days</strong>.</p>
+          <div class="hero-meta">
+            <div class="hero-meta-item">
+              <div class="hero-meta-label">CONDITION</div>
+              <div class="hero-meta-val" style="font-size:15px;font-weight:500">ACL Recovery — Right Knee</div>
+            </div>
+            <div class="hero-meta-item">
+              <div class="hero-meta-label">DAYS ACTIVE</div>
+              <div class="hero-meta-val">12</div>
+            </div>
+            <div class="hero-meta-item">
+              <div class="hero-meta-label">ADHERENCE</div>
+              <div class="hero-meta-val">78%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Prediction box -->
+        <div class="ai-insight">
+          <div class="ai-insight-header">
+            <span class="ai-chip">AI Insight</span>
+            <span style="font-size:13px;color:var(--text-secondary);font-weight:500">Recovery Prediction</span>
+          </div>
+          <p>Based on your current exercise completion rate and early progress data, you are <strong>on track for a full recovery within 10–12 weeks</strong>. Patients with your profile who maintain ≥75% adherence recover an average of <strong>3.2 weeks sooner</strong> than those who do not.</p>
+        </div>
+
+        <!-- Today's checklist -->
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-title"><div class="card-title-icon">✓</div> Today's Exercise Plan</div>
+          <div id="patient-checklist">
+            <div class="checklist-item" onclick="toggleCheck(this)">
+              <div class="check-box checked">✓</div>
+              <div class="checklist-label done">Quad Sets — 3 sets × 15 reps</div>
+              <span class="checklist-action">View guide</span>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+              <div class="check-box checked">✓</div>
+              <div class="checklist-label done">Straight Leg Raises — 3 sets × 12 reps</div>
+              <span class="checklist-action">View guide</span>
+            </div>
+            <div class="checklist-item" onclick="openExerciseModal('Heel Slides', '🦵', '2 sets × 20 reps · 90 seconds rest', ['Lie flat on your back on a firm surface with legs extended.','Slowly slide your heel towards your buttocks, bending the knee as far as comfortable.','Hold for 2 seconds at the top of the movement.','Slowly return to the start position. That is one repetition.','Keep your movements slow and controlled throughout.'])">
+              <div class="check-box">&#8203;</div>
+              <div class="checklist-label">Heel Slides — 2 sets × 20 reps</div>
+              <span class="checklist-action" style="color:var(--nhs-blue)">▶ Start + Guide</span>
+            </div>
+            <div class="checklist-item" onclick="openExerciseModal('Wall Squats', '🧍', '3 sets × 10 reps · 120 seconds rest', ['Stand with your back flat against a wall, feet shoulder-width apart, approximately 30cm from the wall.','Slowly slide your back down the wall until your knees are at a 90° angle.','Hold this position for 5–10 seconds, maintaining even weight on both feet.','Slowly straighten back to the starting position.','Ensure your knees track over your toes and do not cave inwards.'])">
+              <div class="check-box">&#8203;</div>
+              <div class="checklist-label">Wall Squats — 3 sets × 10 reps</div>
+              <span class="checklist-action" style="color:var(--nhs-blue)">▶ Start + Guide</span>
+            </div>
+            <div class="checklist-item" onclick="openExerciseModal('Calf Raises', '🦶', '3 sets × 15 reps · 45 seconds rest', ['Stand near a wall or sturdy surface for balance support if needed.','Rise up onto the balls of both feet simultaneously.','Hold the raised position for 1–2 seconds.','Lower slowly and with control back to the floor.','Distribute weight evenly between both feet throughout.'])">
+              <div class="check-box">&#8203;</div>
+              <div class="checklist-label">Calf Raises — 3 sets × 15 reps</div>
+              <span class="checklist-action" style="color:var(--nhs-blue)">▶ Start + Guide</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- How are you feeling -->
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-title"><div class="card-title-icon">💬</div> How are you feeling today?</div>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;font-weight:300">Your response is shared with your physiotherapist, Dr. James Okafor.</p>
+          <div class="mood-grid" id="moodGrid">
+            <button class="mood-btn" onclick="selectMood(this)"><span class="mood-emoji">😣</span><span class="mood-label">In pain</span></button>
+            <button class="mood-btn" onclick="selectMood(this)"><span class="mood-emoji">😕</span><span class="mood-label">Tired</span></button>
+            <button class="mood-btn" onclick="selectMood(this)"><span class="mood-emoji">😐</span><span class="mood-label">Okay</span></button>
+            <button class="mood-btn selected" onclick="selectMood(this)"><span class="mood-emoji">🙂</span><span class="mood-label">Good</span></button>
+            <button class="mood-btn" onclick="selectMood(this)"><span class="mood-emoji">😄</span><span class="mood-label">Very good</span></button>
+          </div>
+        </div>
+
+        <!-- NHS cost callout -->
+        <div class="notif notif-info">
+          <span style="font-size:18px;flex-shrink:0">💷</span>
+          <div><strong>Your commitment matters.</strong> Patients who skip prescribed exercises cost the NHS an estimated <strong>£480 per person</strong> in repeat appointments and delayed treatment. Your 78% adherence has helped avoid unnecessary healthcare costs.</div>
+        </div>
+      </div>
+
+      <!-- EXERCISES -->
+      <div id="pt-exercises" class="pt-panel" style="display:none">
+        <div class="page-header">
+          <h1>Exercise Library</h1>
+          <p>Your prescribed programme — tap any exercise to view the full tutorial and start a timer.</p>
+        </div>
+
+        <div class="info-callout">
+          All exercises have been prescribed by <strong>Dr. James Okafor</strong>. If you experience sharp pain, swelling, or significant discomfort, stop immediately and contact your physiotherapist.
+        </div>
+
+        <div class="grid-3" style="gap:20px">
+          <div class="exercise-card" onclick="openExerciseModal('Quad Sets', '🦵', '3 sets × 15 reps · 45 sec rest', ['Sit or lie with your leg extended flat on a surface.','Tighten the muscle on top of your thigh (quadriceps) by pressing the back of your knee down.','Hold the contraction for 5 seconds — you should feel the muscle engage firmly.','Slowly release the contraction. That is one repetition.','Keep breathing steadily throughout; do not hold your breath.'])">
+            <div class="exercise-visual">
+              <div class="exercise-step-badge">Phase 2 · Week 6</div>
+              <div class="exercise-figure">🧎</div>
+            </div>
+            <div class="exercise-body">
+              <div class="exercise-name">Quad Sets</div>
+              <div class="exercise-meta">3 sets × 15 reps &nbsp;·&nbsp; 45 sec rest &nbsp;·&nbsp; 8 mins</div>
+              <div class="exercise-instructions">Isometric quadriceps strengthening. Suitable for early-stage ACL recovery.</div>
+            </div>
+          </div>
+
+          <div class="exercise-card" onclick="openExerciseModal('Straight Leg Raises', '🦵', '3 sets × 12 reps · 60 sec rest', ['Lie on your back with one leg bent and foot flat on the floor.','Keep the opposite leg straight and tighten the thigh muscle.','Raise the straight leg to the height of the opposite knee — approximately 45°.','Hold for 2 seconds, then slowly lower back to the floor.','Do not allow the lower back to arch away from the floor.'])">
+            <div class="exercise-visual">
+              <div class="exercise-step-badge">Phase 2 · Week 6</div>
+              <div class="exercise-figure">🏃</div>
+            </div>
+            <div class="exercise-body">
+              <div class="exercise-name">Straight Leg Raises</div>
+              <div class="exercise-meta">3 sets × 12 reps &nbsp;·&nbsp; 60 sec rest &nbsp;·&nbsp; 10 mins</div>
+              <div class="exercise-instructions">Strengthens the hip flexors and quadriceps without loading the knee joint.</div>
+            </div>
+          </div>
+
+          <div class="exercise-card" onclick="openExerciseModal('Heel Slides', '🦵', '2 sets × 20 reps · 90 sec rest', ['Lie flat on your back on a firm surface with legs extended.','Slowly slide your heel towards your buttocks, bending the knee as far as comfortable.','Hold for 2 seconds at the top of the movement.','Slowly return to the start position. That is one repetition.','Keep your movements slow and controlled throughout.'])">
+            <div class="exercise-visual">
+              <div class="exercise-step-badge">Phase 2 · Week 6</div>
+              <div class="exercise-figure">🦵</div>
+            </div>
+            <div class="exercise-body">
+              <div class="exercise-name">Heel Slides</div>
+              <div class="exercise-meta">2 sets × 20 reps &nbsp;·&nbsp; 90 sec rest &nbsp;·&nbsp; 12 mins</div>
+              <div class="exercise-instructions">Improves knee flexion range of motion. Gentle and progressive.</div>
+            </div>
+          </div>
+
+          <div class="exercise-card" onclick="openExerciseModal('Wall Squats', '🧍', '3 sets × 10 reps · 120 sec rest', ['Stand with your back flat against a wall, feet shoulder-width apart, approximately 30cm from the wall.','Slowly slide your back down the wall until your knees are at a 90° angle.','Hold this position for 5–10 seconds, maintaining even weight on both feet.','Slowly straighten back to the starting position.','Ensure your knees track over your toes and do not cave inwards.'])">
+            <div class="exercise-visual">
+              <div class="exercise-step-badge">Phase 2 · Week 6</div>
+              <div class="exercise-figure">🏋</div>
+            </div>
+            <div class="exercise-body">
+              <div class="exercise-name">Wall Squats</div>
+              <div class="exercise-meta">3 sets × 10 reps &nbsp;·&nbsp; 120 sec rest &nbsp;·&nbsp; 15 mins</div>
+              <div class="exercise-instructions">Controlled weight-bearing exercise. Builds quadriceps and glute strength.</div>
+            </div>
+          </div>
+
+          <div class="exercise-card" onclick="openExerciseModal('Calf Raises', '🦶', '3 sets × 15 reps · 45 sec rest', ['Stand near a wall or sturdy surface for balance support if needed.','Rise up onto the balls of both feet simultaneously.','Hold the raised position for 1–2 seconds.','Lower slowly and with control back to the floor.','Distribute weight evenly between both feet throughout.'])">
+            <div class="exercise-visual">
+              <div class="exercise-step-badge">Phase 2 · Week 6</div>
+              <div class="exercise-figure">🦶</div>
+            </div>
+            <div class="exercise-body">
+              <div class="exercise-name">Calf Raises</div>
+              <div class="exercise-meta">3 sets × 15 reps &nbsp;·&nbsp; 45 sec rest &nbsp;·&nbsp; 8 mins</div>
+              <div class="exercise-instructions">Strengthens the gastrocnemius and soleus. Essential for gait rehabilitation.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROGRESS -->
+      <div id="pt-progress" class="pt-panel" style="display:none">
+        <div class="page-header">
+          <h1>My Progress</h1>
+          <p>A record of your exercise adherence and recovery journey.</p>
+        </div>
+
+        <div class="grid-4" style="margin-bottom:24px">
+          <div class="stat-card stat-accent-blue">
+            <div class="stat-label">Adherence Rate</div>
+            <div class="stat-value">78%</div>
+            <div class="stat-sub">↑ 6% from last week</div>
+          </div>
+          <div class="stat-card stat-accent-green">
+            <div class="stat-label">Days Active</div>
+            <div class="stat-value">12</div>
+            <div class="stat-sub">of 14 days</div>
+          </div>
+          <div class="stat-card stat-accent-blue">
+            <div class="stat-label">Exercises Done</div>
+            <div class="stat-value">63</div>
+            <div class="stat-sub">this programme</div>
+          </div>
+          <div class="stat-card stat-accent-green">
+            <div class="stat-label">Est. Recovery</div>
+            <div class="stat-value">10–12w</div>
+            <div class="stat-sub">AI prediction</div>
+          </div>
+        </div>
+
+        <!-- AI recovery prediction -->
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-title"><div class="card-title-icon">🤖</div> AI Recovery Prediction</div>
+          <div class="ai-insight" style="margin-bottom:16px">
+            <div class="ai-insight-header">
+              <span class="ai-chip">AI Analysis</span>
+              <span style="font-size:13px;color:var(--text-secondary);font-weight:500">Based on 12 days of data</span>
+            </div>
+            <p>Your recovery trajectory is <strong>positive</strong>. Predicted full functional recovery: <strong>10–12 weeks</strong> from programme start. Risk of slow recovery: <strong style="color:var(--green)">Low (18%)</strong>. Likelihood of sustained adherence: <strong style="color:var(--green)">High (82%)</strong>.</p>
+          </div>
+
+          <!-- Simple SVG recovery curve -->
+          <div style="margin-bottom:8px;font-size:12px;color:var(--text-muted);font-weight:500">ESTIMATED RECOVERY TRAJECTORY</div>
+          <div class="recovery-chart">
+            <svg class="chart-svg" viewBox="0 0 480 110" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="chartGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#005EB8" stop-opacity="0.15"/>
+                  <stop offset="100%" stop-color="#005EB8" stop-opacity="0.01"/>
+                </linearGradient>
+              </defs>
+              <!-- Grid lines -->
+              <line x1="0" y1="22" x2="480" y2="22" stroke="#E8ECEF" stroke-width="1"/>
+              <line x1="0" y1="55" x2="480" y2="55" stroke="#E8ECEF" stroke-width="1"/>
+              <line x1="0" y1="88" x2="480" y2="88" stroke="#E8ECEF" stroke-width="1"/>
+              <!-- Fill area -->
+              <path d="M0,88 C40,85 80,78 120,68 C160,58 200,42 240,34 C280,26 320,20 360,16 C400,12 440,10 480,10 L480,110 L0,110 Z" fill="url(#chartGrad)"/>
+              <!-- Line -->
+              <path d="M0,88 C40,85 80,78 120,68 C160,58 200,42 240,34 C280,26 320,20 360,16 C400,12 440,10 480,10" fill="none" stroke="var(--nhs-blue)" stroke-width="2.5" stroke-linecap="round"/>
+              <!-- Current position -->
+              <circle cx="130" cy="66" r="5" fill="var(--nhs-blue)"/>
+              <line x1="130" y1="10" x2="130" y2="100" stroke="var(--nhs-blue)" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+              <text x="134" y="22" font-size="10" fill="var(--nhs-blue)" font-family="Lexend, sans-serif" font-weight="600">Today — Week 6</text>
+              <!-- Labels -->
+              <text x="0" y="107" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">Wk 1</text>
+              <text x="110" y="107" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">Wk 6</text>
+              <text x="230" y="107" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">Wk 10</text>
+              <text x="380" y="107" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">Wk 16</text>
+              <!-- Y labels -->
+              <text x="0" y="20" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">100%</text>
+              <text x="0" y="54" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">50%</text>
+              <text x="0" y="88" font-size="9" fill="#94A3B8" font-family="Lexend,sans-serif">0%</text>
+            </svg>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;font-weight:300">Functional recovery score over programme duration</div>
+        </div>
+
+        <!-- Weekly bars -->
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-title"><div class="card-title-icon">📊</div> Exercise Adherence — This Week</div>
+          <div class="week-bars">
+            <div class="week-bar-col">
+              <div class="week-bar" style="height:60%;background:var(--nhs-blue);opacity:0.7"></div>
+              <div class="week-day-label">Mon</div>
+            </div>
+            <div class="week-bar-col">
+              <div class="week-bar" style="height:80%;background:var(--nhs-blue)"></div>
+              <div class="week-day-label">Tue</div>
+            </div>
+            <div class="week-bar-col">
+              <div class="week-bar" style="height:45%;background:var(--amber)"></div>
+              <div class="week-day-label">Wed</div>
+            </div>
+            <div class="week-bar-col">
+              <div class="week-bar" style="height:100%;background:var(--green)"></div>
+              <div class="week-day-label">Thu</div>
+            </div>
+            <div class="week-bar-col">
+              <div class="week-bar" style="height:70%;background:var(--nhs-blue)"></div>
+              <div class="week-day-label">Fri</div>
+            </div>
+            <div class="week-bar-col">
+              <div class="week-bar" style="height:90%;background:var(--nhs-blue)"></div>
+              <div class="week-day-label">Sat</div>
+            </div>
+            <div class="week-bar-col">
+              <div class="week-bar" style="height:12%;background:var(--border)"></div>
+              <div class="week-day-label">Sun</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- APPOINTMENTS -->
+      <div id="pt-appointments" class="pt-panel" style="display:none">
+        <div class="page-header">
+          <h1>Appointments</h1>
+          <p>Your upcoming and recent appointments with Dr. James Okafor.</p>
+        </div>
+        <div class="appt-card">
+          <div class="appt-date-block"><div class="appt-day">26</div><div class="appt-month">MAR</div></div>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:15px">Physiotherapy Review — Week 8</div>
+            <div style="font-size:13px;color:var(--text-muted);margin-top:2px">10:30 AM · QMC Nottingham, Physiotherapy Department, Level 1</div>
+            <div style="margin-top:8px;display:flex;gap:8px">
+              <span class="tag">In Person</span>
+              <span class="tag" style="background:#EBF3FB;color:var(--nhs-blue);border-color:#B8D4EE">Confirmed</span>
+            </div>
+          </div>
+          <button class="btn btn-outline btn-sm">+ Calendar</button>
+        </div>
+        <div class="appt-card">
+          <div class="appt-date-block" style="background:var(--text-muted)"><div class="appt-day">12</div><div class="appt-month">MAR</div></div>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:15px">Physiotherapy Assessment — Week 6</div>
+            <div style="font-size:13px;color:var(--text-muted);margin-top:2px">2:00 PM · QMC Nottingham, Physiotherapy Department</div>
+            <div style="margin-top:8px"><span class="tag">Completed</span></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:24px">
+          <div class="card-title"><div class="card-title-icon">👨‍⚕️</div> Your Physiotherapist</div>
+          <div style="display:flex;gap:16px;align-items:center">
+            <div style="width:52px;height:52px;background:var(--nhs-blue);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:18px;flex-shrink:0">JO</div>
+            <div>
+              <div style="font-weight:600;font-size:16px">Dr. James Okafor</div>
+              <div style="font-size:13px;color:var(--text-muted)">Senior Physiotherapist · QMC Nottingham</div>
+              <div style="margin-top:8px;display:flex;gap:8px">
+                <a href="tel:01159241234" class="btn btn-primary btn-sm">📞 0115 924 1234</a>
+                <button class="btn btn-outline btn-sm" onclick="patientTab('contact', null)">✉ Message</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT -->
+      <div id="pt-contact" class="pt-panel" style="display:none">
+        <div class="page-header">
+          <h1>Contact Your Physiotherapist</h1>
+          <p>Send a message to Dr. James Okafor. For urgent medical concerns, please call 111 or your GP.</p>
+        </div>
+        <div class="notif notif-warn" style="margin-bottom:20px">
+          <span>⚠</span>
+          <div>This is not an emergency service. If you are experiencing severe pain or a medical emergency, call <strong>999</strong> or go to your nearest A&E.</div>
+        </div>
+        <div class="card">
+          <div style="margin-bottom:16px">
+            <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px">Subject</label>
+            <select style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:14px;color:var(--text-primary);background:white">
+              <option>Question about my exercises</option>
+              <option>Reporting pain or discomfort</option>
+              <option>Appointment query</option>
+              <option>Medication question</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div style="margin-bottom:16px">
+            <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px">Message</label>
+            <textarea rows="5" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:14px;resize:vertical;color:var(--text-primary)" placeholder="Describe your question or concern…"></textarea>
+          </div>
+          <button class="btn btn-primary">Send Message</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  CLINICIAN DASHBOARD                                      -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="clinician-view" class="view">
+  <div class="app-shell">
+    <!-- Clinician Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Dashboard</div>
+        <div class="sidebar-item active" onclick="clinicianTab('overview', this)">
+          <span class="sidebar-icon">⊞</span> Overview
+        </div>
+        <div class="sidebar-item" onclick="clinicianTab('patients', this)">
+          <span class="sidebar-icon">👥</span> Patient List
+        </div>
+        <div class="sidebar-item" onclick="clinicianTab('ai-risk', this)">
+          <span class="sidebar-icon">🤖</span> AI Risk Flags
+        </div>
+        <div class="sidebar-item" onclick="clinicianTab('analytics', this)">
+          <span class="sidebar-icon">📊</span> Analytics
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="clinician-card">
+          <div class="clinician-avatar">JO</div>
+          <div>
+            <div class="clinician-name">Dr. James Okafor</div>
+            <div class="clinician-role">Senior Physiotherapist</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Clinician Main -->
+    <main class="main">
+
+      <!-- OVERVIEW -->
+      <div id="cl-overview" class="cl-panel">
+        <div class="page-header">
+          <h1>Clinician Dashboard</h1>
+          <p>Saturday 21 March 2026 &nbsp;·&nbsp; QMC Nottingham</p>
+        </div>
+
+        <!-- Summary stats -->
+        <div class="grid-4" style="margin-bottom:24px">
+          <div class="stat-card stat-accent-blue">
+            <div class="stat-label">Total Patients</div>
+            <div class="stat-value">24</div>
+            <div class="stat-sub">Active programmes</div>
+          </div>
+          <div class="stat-card stat-accent-red">
+            <div class="stat-label">High Risk</div>
+            <div class="stat-value" style="color:var(--red)">4</div>
+            <div class="stat-sub">Require intervention</div>
+          </div>
+          <div class="stat-card stat-accent-amber">
+            <div class="stat-label">Amber Risk</div>
+            <div class="stat-value" style="color:var(--amber)">7</div>
+            <div class="stat-sub">Monitor closely</div>
+          </div>
+          <div class="stat-card stat-accent-green">
+            <div class="stat-label">Avg Adherence</div>
+            <div class="stat-value" style="color:var(--green)">71%</div>
+            <div class="stat-sub">Across all patients</div>
+          </div>
+        </div>
+
+        <!-- AI alert -->
+        <div class="ai-insight" style="margin-bottom:20px">
+          <div class="ai-insight-header">
+            <span class="ai-chip">AI Alert</span>
+            <span style="font-size:13px;color:var(--text-secondary);font-weight:500">3 new risk flags this week</span>
+          </div>
+          <p><strong>Derek Patel</strong> has a <strong style="color:var(--red)">65% risk of poor adherence</strong> based on early behavioural patterns — missing 5 of the last 7 sessions. <strong>Immediate outreach recommended.</strong> Two additional patients have been flagged as amber risk due to reduced session frequency.</p>
+        </div>
+
+        <!-- Active alerts -->
+        <div class="notif notif-alert" style="margin-bottom:10px">
+          <span style="font-size:16px;flex-shrink:0">🔴</span>
+          <div><strong>Derek Patel</strong> — Lower Back Rehab &nbsp;·&nbsp; 42% adherence &nbsp;·&nbsp; 3 sessions missed in a row &nbsp;·&nbsp; <span style="text-decoration:underline;cursor:pointer" onclick="clinicianTab('ai-risk',null)">View AI Risk Report →</span></div>
+        </div>
+        <div class="notif notif-warn" style="margin-bottom:10px">
+          <span style="font-size:16px;flex-shrink:0">🟡</span>
+          <div><strong>Marcus Chen</strong> — Rotator Cuff &nbsp;·&nbsp; 54% adherence &nbsp;·&nbsp; declining trend for 2 weeks &nbsp;·&nbsp; Check in recommended</div>
+        </div>
+        <div class="notif notif-info">
+          <span style="font-size:16px;flex-shrink:0">🟢</span>
+          <div><strong>Linda Cross</strong> — Shoulder Impingement &nbsp;·&nbsp; 95% adherence &nbsp;·&nbsp; Ready to progress to Phase 3 exercises</div>
+        </div>
+      </div>
+
+      <!-- PATIENT LIST -->
+      <div id="cl-patients" class="cl-panel" style="display:none">
+        <div class="page-header">
+          <h1>Patient List</h1>
+          <p>All active physiotherapy programmes. Click a patient to view their full record.</p>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <table class="patient-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Condition</th>
+                <th>Adherence</th>
+                <th>AI Risk</th>
+                <th>Last Active</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="openPatientDetail('Sarah Mitchell','ACL Recovery — Right Knee','78','low','Today','On Track')">
+                <td><div class="patient-name-cell">Sarah Mitchell, 34</div><div class="patient-sub">NHS No: 485 273 6109</div></td>
+                <td>ACL Recovery — R. Knee</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div style="flex:1;max-width:80px"><div class="progress-track"><div class="progress-fill" style="width:78%;background:var(--nhs-blue)"></div></div></div>
+                    <span style="font-size:13px;font-weight:600;min-width:32px">78%</span>
+                  </div>
+                </td>
+                <td><span class="rag-badge rag-green"><span class="rag-dot"></span>Low</span></td>
+                <td style="color:var(--text-muted);font-size:13px">Today</td>
+                <td><span class="rag-badge rag-green"><span class="rag-dot"></span>On Track</span></td>
+              </tr>
+              <tr onclick="openPatientDetail('Derek Patel','Lower Back Rehabilitation','42','high','3 days ago','At Risk')">
+                <td><div class="patient-name-cell">Derek Patel, 58</div><div class="patient-sub">NHS No: 391 847 2031</div></td>
+                <td>Lower Back Rehabilitation</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div style="flex:1;max-width:80px"><div class="progress-track"><div class="progress-fill" style="width:42%;background:var(--red)"></div></div></div>
+                    <span style="font-size:13px;font-weight:600;min-width:32px;color:var(--red)">42%</span>
+                  </div>
+                </td>
+                <td><span class="rag-badge rag-red"><span class="rag-dot"></span>High — 65%</span></td>
+                <td style="color:var(--red);font-size:13px;font-weight:500">3 days ago</td>
+                <td><span class="rag-badge rag-red"><span class="rag-dot"></span>At Risk</span></td>
+              </tr>
+              <tr onclick="openPatientDetail('Linda Cross','Shoulder Impingement','95','low','Today','Excellent')">
+                <td><div class="patient-name-cell">Linda Cross, 47</div><div class="patient-sub">NHS No: 512 930 8847</div></td>
+                <td>Shoulder Impingement</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div style="flex:1;max-width:80px"><div class="progress-track"><div class="progress-fill" style="width:95%;background:var(--green)"></div></div></div>
+                    <span style="font-size:13px;font-weight:600;min-width:32px;color:var(--green)">95%</span>
+                  </div>
+                </td>
+                <td><span class="rag-badge rag-green"><span class="rag-dot"></span>Low</span></td>
+                <td style="color:var(--text-muted);font-size:13px">Today</td>
+                <td><span class="rag-badge rag-green"><span class="rag-dot"></span>Excellent</span></td>
+              </tr>
+              <tr onclick="openPatientDetail('Marcus Chen','Rotator Cuff Repair','54','amber','Yesterday','Monitor')">
+                <td><div class="patient-name-cell">Marcus Chen, 42</div><div class="patient-sub">NHS No: 274 615 9302</div></td>
+                <td>Rotator Cuff Repair</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div style="flex:1;max-width:80px"><div class="progress-track"><div class="progress-fill" style="width:54%;background:var(--amber)"></div></div></div>
+                    <span style="font-size:13px;font-weight:600;min-width:32px;color:#7D4800">54%</span>
+                  </div>
+                </td>
+                <td><span class="rag-badge rag-amber"><span class="rag-dot"></span>Medium</span></td>
+                <td style="color:var(--text-muted);font-size:13px">Yesterday</td>
+                <td><span class="rag-badge rag-amber"><span class="rag-dot"></span>Monitor</span></td>
+              </tr>
+              <tr onclick="openPatientDetail('Amara Osei','Hip Replacement Recovery','88','low','Today','On Track')">
+                <td><div class="patient-name-cell">Amara Osei, 61</div><div class="patient-sub">NHS No: 837 402 1156</div></td>
+                <td>Hip Replacement Recovery</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div style="flex:1;max-width:80px"><div class="progress-track"><div class="progress-fill" style="width:88%;background:var(--nhs-blue)"></div></div></div>
+                    <span style="font-size:13px;font-weight:600;min-width:32px">88%</span>
+                  </div>
+                </td>
+                <td><span class="rag-badge rag-green"><span class="rag-dot"></span>Low</span></td>
+                <td style="color:var(--text-muted);font-size:13px">Today</td>
+                <td><span class="rag-badge rag-green"><span class="rag-dot"></span>On Track</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- AI RISK FLAGS -->
+      <div id="cl-ai-risk" class="cl-panel" style="display:none">
+        <div class="page-header">
+          <h1>AI Risk Flagging</h1>
+          <p>Machine learning predictions to identify patients at risk of non-adherence, complications, or delayed recovery — enabling earlier clinical intervention.</p>
+        </div>
+
+        <div class="info-callout">
+          <strong>About this feature:</strong> Risk scores are calculated using AI models trained on physiotherapy adherence data, session frequency, early behavioural patterns, and condition-specific recovery benchmarks. These are <strong>clinical decision support tools</strong>, not diagnostic outputs. All clinical decisions remain with the responsible clinician.
+        </div>
+
+        <!-- HIGH RISK -->
+        <div style="margin-bottom:8px;display:flex;align-items:center;gap:10px">
+          <span style="width:12px;height:12px;background:var(--red);border-radius:50%;display:inline-block"></span>
+          <span style="font-size:13px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:0.5px">Red — Immediate Action Required (1 patient)</span>
+        </div>
+        <div class="card" style="border-left:4px solid var(--red);margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+            <div>
+              <div style="font-size:17px;font-weight:700">Derek Patel, 58</div>
+              <div style="font-size:13px;color:var(--text-muted);font-weight:300">Lower Back Rehabilitation · Week 4 · NHS No: 391 847 2031</div>
+            </div>
+            <span class="rag-badge rag-red" style="font-size:13px;padding:5px 14px"><span class="rag-dot"></span>HIGH RISK</span>
+          </div>
+
+          <div class="grid-3" style="margin-bottom:20px">
+            <div style="text-align:center;padding:14px;background:var(--red-bg);border-radius:var(--radius);border:1px solid #f5b8b5">
+              <div style="font-size:26px;font-weight:700;color:var(--red);font-family:'Lora',serif">65%</div>
+              <div style="font-size:11px;color:var(--red);font-weight:600;text-transform:uppercase;letter-spacing:0.4px">Non-Adherence Risk</div>
+            </div>
+            <div style="text-align:center;padding:14px;background:var(--red-bg);border-radius:var(--radius);border:1px solid #f5b8b5">
+              <div style="font-size:26px;font-weight:700;color:var(--red);font-family:'Lora',serif">48%</div>
+              <div style="font-size:11px;color:var(--red);font-weight:600;text-transform:uppercase;letter-spacing:0.4px">Slow Recovery Risk</div>
+            </div>
+            <div style="text-align:center;padding:14px;background:var(--amber-bg);border-radius:var(--radius);border:1px solid #f5d38a">
+              <div style="font-size:26px;font-weight:700;color:#7D4800;font-family:'Lora',serif">31%</div>
+              <div style="font-size:11px;color:#7D4800;font-weight:600;text-transform:uppercase;letter-spacing:0.4px">Drop-Out Risk</div>
+            </div>
+          </div>
+
+          <div class="ai-insight" style="margin-bottom:16px">
+            <div class="ai-insight-header"><span class="ai-chip">AI Analysis</span></div>
+            <p>Patient A has a <strong>65% risk of poor adherence</strong> based on early behaviour patterns. He has completed only <strong>2 of the last 7 prescribed sessions</strong> and has not logged in for 3 consecutive days. Patients with this profile who do not receive intervention within 5 days have a 3× higher likelihood of programme dropout. <strong>Recommended action: telephone check-in within 48 hours.</strong></p>
+          </div>
+
+          <div style="margin-bottom:16px">
+            <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text-secondary)">CONTRIBUTING RISK FACTORS</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+                <span style="color:var(--red);font-size:16px">●</span>
+                <span>3 consecutive missed sessions (threshold: 2)</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+                <span style="color:var(--red);font-size:16px">●</span>
+                <span>Week 1–2 adherence: 28% (population average: 71%)</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+                <span style="color:var(--amber);font-size:16px">●</span>
+                <span>Reported mood: "Tired" or "In pain" on 4 of last 5 log-ins</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+                <span style="color:var(--amber);font-size:16px">●</span>
+                <span>Age 55+ with chronic lower back condition — higher dropout probability</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-primary">📞 Call Patient</button>
+            <button class="btn btn-outline">✉ Send Message</button>
+            <button class="btn btn-ghost">📋 View Full Record</button>
+          </div>
+        </div>
+
+        <!-- AMBER RISK -->
+        <div style="margin-bottom:8px;display:flex;align-items:center;gap:10px">
+          <span style="width:12px;height:12px;background:var(--amber);border-radius:50%;display:inline-block"></span>
+          <span style="font-size:13px;font-weight:700;color:#7D4800;text-transform:uppercase;letter-spacing:0.5px">Amber — Monitor Closely (2 patients)</span>
+        </div>
+
+        <div class="card" style="border-left:4px solid var(--amber);margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div>
+              <div style="font-size:15px;font-weight:700">Marcus Chen, 42</div>
+              <div style="font-size:12px;color:var(--text-muted);font-weight:300">Rotator Cuff Repair · Week 6</div>
+            </div>
+            <span class="rag-badge rag-amber"><span class="rag-dot"></span>MEDIUM RISK</span>
+          </div>
+          <div class="ai-insight" style="margin-bottom:12px">
+            <div class="ai-insight-header"><span class="ai-chip">AI Analysis</span></div>
+            <p>Adherence has declined from <strong>74% to 54%</strong> over the past two weeks. AI predicts a <strong>38% probability of continued decline</strong> without intervention. Mood self-reports have been neutral to negative for 6 consecutive days. Recommend a follow-up message or call this week.</p>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline btn-sm">✉ Send Check-in</button>
+            <button class="btn btn-ghost btn-sm">📋 View Record</button>
+          </div>
+        </div>
+
+        <div class="card" style="border-left:4px solid var(--amber);margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div>
+              <div style="font-size:15px;font-weight:700">Patricia Wells, 67</div>
+              <div style="font-size:12px;color:var(--text-muted);font-weight:300">Knee Osteoarthritis Management · Week 3</div>
+            </div>
+            <span class="rag-badge rag-amber"><span class="rag-dot"></span>MEDIUM RISK</span>
+          </div>
+          <div class="ai-insight" style="margin-bottom:12px">
+            <div class="ai-insight-header"><span class="ai-chip">AI Analysis</span></div>
+            <p>New patient with <strong>58% first-week adherence</strong>. Patients aged 65+ with osteoarthritis conditions show a bimodal distribution — they either adhere very well or drop off rapidly after week 3. Recommend proactive engagement during week 4 to establish habit.</p>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline btn-sm">✉ Send Check-in</button>
+            <button class="btn btn-ghost btn-sm">📋 View Record</button>
+          </div>
+        </div>
+
+        <!-- GREEN -->
+        <div style="margin-bottom:8px;display:flex;align-items:center;gap:10px">
+          <span style="width:12px;height:12px;background:var(--green);border-radius:50%;display:inline-block"></span>
+          <span style="font-size:13px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:0.5px">Green — On Track (21 patients)</span>
+        </div>
+        <div class="card" style="border-left:4px solid var(--green)">
+          <p style="font-size:14px;color:var(--text-secondary);font-weight:300">21 patients are currently on track with adherence rates above 70%. No immediate intervention required. The AI model will continue to monitor for early warning signals and will surface new flags automatically.</p>
+          <div style="margin-top:12px;font-size:13px;color:var(--text-muted)">Notable: <strong>Linda Cross</strong> (95% adherence) is ready for programme progression. <strong>Amara Osei</strong> (88%) has reached Phase 2 milestone.</div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div id="cl-analytics" class="cl-panel" style="display:none">
+        <div class="page-header">
+          <h1>Analytics</h1>
+          <p>Programme-level outcomes and NHS resource impact across your patient caseload.</p>
+        </div>
+
+        <div class="grid-4" style="margin-bottom:24px">
+          <div class="stat-card stat-accent-blue">
+            <div class="stat-label">Avg Recovery Time</div>
+            <div class="stat-value">11.4w</div>
+            <div class="stat-sub">vs 14.2w national avg</div>
+          </div>
+          <div class="stat-card stat-accent-green">
+            <div class="stat-label">NHS Cost Saved</div>
+            <div class="stat-value">£4,320</div>
+            <div class="stat-sub">This month (est.)</div>
+          </div>
+          <div class="stat-card stat-accent-blue">
+            <div class="stat-label">Programme Completion</div>
+            <div class="stat-value">84%</div>
+            <div class="stat-sub">↑ 12% vs 6mo ago</div>
+          </div>
+          <div class="stat-card stat-accent-green">
+            <div class="stat-label">AI Interventions</div>
+            <div class="stat-value">9</div>
+            <div class="stat-sub">Flagged & acted on</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-title"><div class="card-title-icon">💷</div> NHS Cost Impact</div>
+          <div class="info-callout" style="margin-bottom:16px">
+            Each missed physiotherapy session costs the NHS an estimated <strong>£80 in wasted appointment time</strong>. Non-adherent patients require an average of <strong>3 additional repeat appointments</strong> (est. £240 per patient). The AI early intervention system has helped avoid unnecessary contacts across your caseload.
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:center">
+            <div style="padding:16px;background:var(--nhs-warm);border-radius:var(--radius)">
+              <div style="font-size:24px;font-weight:700;color:var(--nhs-blue);font-family:'Lora',serif">9</div>
+              <div style="font-size:12px;color:var(--text-muted);font-weight:500;margin-top:4px">At-risk patients identified early</div>
+            </div>
+            <div style="padding:16px;background:var(--nhs-warm);border-radius:var(--radius)">
+              <div style="font-size:24px;font-weight:700;color:var(--green);font-family:'Lora',serif">27</div>
+              <div style="font-size:12px;color:var(--text-muted);font-weight:500;margin-top:4px">Unnecessary appointments avoided</div>
+            </div>
+            <div style="padding:16px;background:var(--nhs-warm);border-radius:var(--radius)">
+              <div style="font-size:24px;font-weight:700;color:var(--green);font-family:'Lora',serif">£4,320</div>
+              <div style="font-size:12px;color:var(--text-muted);font-weight:500;margin-top:4px">Estimated NHS saving this month</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  EXERCISE MODAL                                           -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="exerciseModal" class="modal-backdrop" style="display:none" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Exercise Tutorial</div>
+      <button class="modal-close" onclick="document.getElementById('exerciseModal').style.display='none'">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:linear-gradient(135deg,#EBF3FB,#ddeeff);border-radius:var(--radius);padding:28px;text-align:center;margin-bottom:20px;border:1px solid var(--border)">
+        <div id="modalFigure" style="font-size:72px;animation:breathe 3s ease-in-out infinite">🦵</div>
+      </div>
+      <div style="font-size:13px;color:var(--text-muted);font-weight:500;margin-bottom:4px" id="modalMeta">3 sets × 15 reps</div>
+
+      <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--text-primary)">Step-by-step Instructions</div>
+      <ol id="modalSteps" style="list-style:none;padding:0;margin-bottom:20px"></ol>
+
+      <!-- Timer -->
+      <div style="background:var(--nhs-warm);border-radius:var(--radius);padding:20px;border:1px solid var(--border);text-align:center">
+        <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Rest Timer</div>
+        <div class="timer-display" id="timerDisplay">01:30</div>
+        <div class="timer-label">minutes : seconds</div>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:16px">
+          <button class="btn btn-primary" id="timerStartBtn" onclick="toggleTimer()">▶ Start Rest Timer</button>
+          <button class="btn btn-ghost btn-sm" onclick="resetTimer()">↺ Reset</button>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;display:flex;gap:10px">
+        <button class="btn btn-primary" style="flex:1" onclick="markDoneFromModal()">✓ Mark as Complete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  PATIENT DETAIL MODAL                                     -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="patientModal" class="modal-backdrop" style="display:none" onclick="closePatientModal(event)">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="pmName">Patient Name</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-top:2px" id="pmCondition">Condition</div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('patientModal').style.display='none'">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap" id="pmBadges"></div>
+
+      <div class="divider"></div>
+
+      <div style="margin-bottom:16px">
+        <div class="card-title" style="margin-bottom:8px"><div class="card-title-icon">🤖</div> AI Risk Summary</div>
+        <div class="ai-insight" id="pmAiText"></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div style="padding:14px;background:var(--nhs-warm);border-radius:var(--radius);border:1px solid var(--border)">
+          <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px">Adherence</div>
+          <div id="pmAdherence" style="font-size:24px;font-weight:700;font-family:'Lora',serif;margin-top:4px"></div>
+        </div>
+        <div style="padding:14px;background:var(--nhs-warm);border-radius:var(--radius);border:1px solid var(--border)">
+          <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px">Last Active</div>
+          <div id="pmLastActive" style="font-size:18px;font-weight:700;font-family:'Lora',serif;margin-top:4px"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary btn-sm">📞 Call Patient</button>
+        <button class="btn btn-outline btn-sm">✉ Send Message</button>
+        <button class="btn btn-ghost btn-sm">📋 Full Record</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Role switching ──────────────────────────────────────────────────────────
+function switchRole(role) {
+  document.getElementById('patient-view').classList.toggle('active', role === 'patient');
+  document.getElementById('clinician-view').classList.toggle('active', role === 'clinician');
+  document.querySelectorAll('.role-tab').forEach((btn, i) => {
+    btn.classList.toggle('active', (i === 0 && role === 'patient') || (i === 1 && role === 'clinician'));
+  });
+}
+
+// ── Patient tabs ────────────────────────────────────────────────────────────
+function patientTab(id, el) {
+  document.querySelectorAll('.pt-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('pt-' + id).style.display = 'block';
+  document.querySelectorAll('#patient-view .sidebar-item').forEach(s => s.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+// ── Clinician tabs ──────────────────────────────────────────────────────────
+function clinicianTab(id, el) {
+  document.querySelectorAll('.cl-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('cl-' + id).style.display = 'block';
+  document.querySelectorAll('#clinician-view .sidebar-item').forEach(s => s.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+// ── Mood selector ───────────────────────────────────────────────────────────
+function selectMood(btn) {
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+// ── Checklist toggle ────────────────────────────────────────────────────────
+function toggleCheck(row) {
+  const box = row.querySelector('.check-box');
+  const label = row.querySelector('.checklist-label');
+  const isDone = box.classList.contains('checked');
+  if (!isDone) {
+    box.classList.add('checked');
+    box.textContent = '✓';
+    label.classList.add('done');
+  } else {
+    box.classList.remove('checked');
+    box.textContent = '\u200B';
+    label.classList.remove('done');
+  }
+}
+
+// ── Exercise Modal ──────────────────────────────────────────────────────────
+let currentTimerSeconds = 90;
+let timerInterval = null;
+let timerRunning = false;
+
+function openExerciseModal(name, figure, meta, steps) {
+  document.getElementById('modalTitle').textContent = name;
+  document.getElementById('modalFigure').textContent = figure;
+  document.getElementById('modalMeta').textContent = meta;
+  const list = document.getElementById('modalSteps');
+  list.innerHTML = '';
+  steps.forEach((s, i) => {
+    const li = document.createElement('li');
+    li.style.cssText = 'display:flex;gap:10px;margin-bottom:10px;font-size:13px;color:#4C6272;line-height:1.6;font-weight:300';
+    li.innerHTML = `<span style="width:22px;height:22px;background:var(--nhs-blue);color:white;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">${i+1}</span><span>${s}</span>`;
+    list.appendChild(li);
+  });
+  // parse rest duration from meta
+  const match = meta.match(/(\d+)\s*sec/);
+  currentTimerSeconds = match ? parseInt(match[1]) : 60;
+  updateTimerDisplay(currentTimerSeconds);
+  document.getElementById('timerStartBtn').textContent = '▶ Start Rest Timer';
+  clearInterval(timerInterval);
+  timerRunning = false;
+  document.getElementById('exerciseModal').style.display = 'flex';
+}
+
+function updateTimerDisplay(s) {
+  const m = Math.floor(s/60);
+  const sec = s % 60;
+  document.getElementById('timerDisplay').textContent = `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+function toggleTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timerStartBtn').textContent = '▶ Resume';
+  } else {
+    timerRunning = true;
+    document.getElementById('timerStartBtn').textContent = '⏸ Pause';
+    timerInterval = setInterval(() => {
+      if (currentTimerSeconds > 0) {
+        currentTimerSeconds--;
+        updateTimerDisplay(currentTimerSeconds);
+      } else {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        document.getElementById('timerStartBtn').textContent = '▶ Restart';
+        document.getElementById('timerDisplay').style.color = 'var(--green)';
+      }
+    }, 1000);
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  const match = document.getElementById('modalMeta').textContent.match(/(\d+)\s*sec/);
+  currentTimerSeconds = match ? parseInt(match[1]) : 60;
+  updateTimerDisplay(currentTimerSeconds);
+  document.getElementById('timerDisplay').style.color = 'var(--nhs-blue)';
+  document.getElementById('timerStartBtn').textContent = '▶ Start Rest Timer';
+}
+
+function markDoneFromModal() {
+  document.getElementById('exerciseModal').style.display = 'none';
+  clearInterval(timerInterval);
+}
+
+function closeModal(e) {
+  if (e.target.id === 'exerciseModal') document.getElementById('exerciseModal').style.display = 'none';
+}
+
+// ── Patient Detail Modal ────────────────────────────────────────────────────
+function openPatientDetail(name, condition, adherence, risk, lastActive, status) {
+  document.getElementById('pmName').textContent = name;
+  document.getElementById('pmCondition').textContent = condition;
+  document.getElementById('pmAdherence').textContent = adherence + '%';
+  document.getElementById('pmLastActive').textContent = lastActive;
+
+  const ragClass = risk === 'high' ? 'rag-red' : risk === 'amber' ? 'rag-amber' : 'rag-green';
+  const ragLabel = risk === 'high' ? 'High Risk' : risk === 'amber' ? 'Medium Risk' : 'Low Risk';
+
+  document.getElementById('pmBadges').innerHTML = `
+    <span class="rag-badge ${ragClass}"><span class="rag-dot"></span>${ragLabel}</span>
+    <span class="tag">${condition}</span>
+    <span class="tag">${status}</span>
+  `;
+
+  const aiMessages = {
+    'high': `<div class="ai-insight-header"><span class="ai-chip">AI Analysis</span></div><p><strong>${name}</strong> has a <strong style="color:var(--red)">65% risk of poor adherence</strong> based on early behaviour patterns. Immediate clinical outreach is recommended within 48 hours to prevent programme dropout.</p>`,
+    'amber': `<div class="ai-insight-header"><span class="ai-chip">AI Analysis</span></div><p><strong>${name}</strong> shows a <strong style="color:var(--amber)">declining adherence trend</strong>. A check-in message or call this week is recommended to re-engage the patient before the pattern worsens.</p>`,
+    'low': `<div class="ai-insight-header"><span class="ai-chip">AI Analysis</span></div><p><strong>${name}</strong> is on track. AI predicts a <strong style="color:var(--green)">low risk of non-adherence</strong> and a positive recovery trajectory. No immediate intervention required.</p>`,
+  };
+  document.getElementById('pmAiText').innerHTML = aiMessages[risk] || aiMessages['low'];
+  document.getElementById('patientModal').style.display = 'flex';
+}
+
+function closePatientModal(e) {
+  if (e.target.id === 'patientModal') document.getElementById('patientModal').style.display = 'none';
+}
+</script>
+</body>
+</html>
