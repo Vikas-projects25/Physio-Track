@@ -338,7 +338,7 @@ body{font-family:'Lexend',sans-serif;background:var(--nhs-warm);color:var(--text
   display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
 
 /* ─── SVG CHART ──────────────────────────────────────────── */
-.trajectory-chart{position:relative;height:200px;padding:12px 10px 30px 46px;}
+.trajectory-chart{position:relative;height:200px;padding:12px 10px 30px 30px;}
 .trajectory-plot{position:relative;width:100%;height:100%;}
 .chart-svg{width:100%;height:100%;overflow:visible;display:block;}
 .axis-label{
@@ -346,7 +346,7 @@ body{font-family:'Lexend',sans-serif;background:var(--nhs-warm);color:var(--text
   letter-spacing:.2px;text-transform:lowercase;
 }
 .axis-label.x{left:50%;bottom:0;transform:translateX(-50%);}
-.axis-label.y{left:14px;top:50%;transform:translateY(-50%) rotate(-90deg);transform-origin:center;}
+.axis-label.y{left:6px;top:50%;transform:translateY(-50%) rotate(-90deg);transform-origin:center;}
 
 /* ─── TIMELINE ───────────────────────────────────────────── */
 .tl{position:relative;padding-left:24px;}
@@ -621,9 +621,9 @@ body{font-family:'Lexend',sans-serif;background:var(--nhs-warm);color:var(--text
     <div class="sb-section">
       <div class="sb-lbl">Dashboard</div>
       <div class="sb-item active" onclick="clTab('overview',this)"><span class="sb-icon">⊞</span>Overview</div>
-      <div class="sb-item" onclick="clTab('patients',this)"><span class="sb-icon">👥</span>Patient List</div>
-      <div class="sb-item" onclick="clTab('ai-risk',this)"><span class="sb-icon">🤖</span>AI Risk Flags</div>
-      <div class="sb-item" onclick="clTab('analytics',this)"><span class="sb-icon">📊</span>Analytics</div>
+      <div class="sb-item" onclick="clTab('patients',this)"><span class="sb-icon"></span>Patient List</div>
+      <div class="sb-item" onclick="clTab('ai-risk',this)"><span class="sb-icon"></span>AI Risk Flags</div>
+      <div class="sb-item" onclick="clTab('analytics',this)"><span class="sb-icon"></span>Analytics</div>
     </div>
     <div class="sb-foot">
       <div class="clin-card">
