@@ -175,6 +175,12 @@ body{font-family:'Lexend',sans-serif;background:var(--nhs-warm);color:var(--text
 .mood-btn:hover,.mood-btn.sel{border-color:var(--green-deeper);background:#EBF7F2;}
 .mood-e{font-size:22px;display:block;margin-bottom:4px;}
 .mood-l{font-size:11px;color:var(--text-sec);font-weight:500;}
+.mood-feedback{
+  display:none;margin-top:14px;padding:12px 14px;border-radius:var(--r);
+  background:#EBF7F2;border:1px solid #B5DEC9;color:var(--green-deeper);
+  font-size:13px;font-weight:500;
+}
+.mood-feedback.show{display:block;}
 
 /* ─── EXERCISE CARDS ─────────────────────────────────────── */
 .ex-card{background:white;border:1px solid var(--border);border-radius:var(--rl);
@@ -464,6 +470,7 @@ body{font-family:'Lexend',sans-serif;background:var(--nhs-warm);color:var(--text
           <button class="mood-btn sel" onclick="selMood(this)"><span class="mood-e">🙂</span><span class="mood-l">Good</span></button>
           <button class="mood-btn" onclick="selMood(this)"><span class="mood-e">😄</span><span class="mood-l">Very good</span></button>
         </div>
+        <div id="mood-feedback" class="mood-feedback" aria-live="polite">This has been successfully reported to Dr. James Okafor</div>
       </div>
 
       <div class="notif notif-info">
@@ -853,7 +860,16 @@ function clTab(id,el){
   if(el)el.classList.add('active');
 }
 // ── Mood ───────────────────────────────────────────────────────
-function selMood(b){document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');}
+let moodFeedbackTimer=null;
+function selMood(b){
+  document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('sel'));
+  b.classList.add('sel');
+  const feedback=document.getElementById('mood-feedback');
+  if(!feedback)return;
+  feedback.classList.add('show');
+  clearTimeout(moodFeedbackTimer);
+  moodFeedbackTimer=setTimeout(()=>feedback.classList.remove('show'),3000);
+}
 
 // ── Checklist ──────────────────────────────────────────────────
 const completedExercises=new Set();
